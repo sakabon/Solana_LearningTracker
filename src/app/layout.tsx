@@ -1,40 +1,26 @@
-"use client";
+import { Inter } from 'next/font/google'
+import './globals.css'
+import dynamic from 'next/dynamic'
 
-import AppWalletProvider from "../components/AppWalletProvider";
-import "@/app/globals.css";
-import Link from "next/link";
-import { WalletMultiButton } from "@solana/wallet-adapter-react-ui";
-import { useState, useEffect } from "react";
+const inter = Inter({ subsets: ['latin'] })
+
+const AppWalletProviderWrapper = dynamic(
+  () => import('../components/AppWalletProviderWrapper'),
+  { ssr: false }
+)
 
 export default function RootLayout({
   children,
-}: Readonly<{
-  children: React.ReactNode;
-}>) {
-  const [isMounted, setIsMounted] = useState(false);
-
-  useEffect(() => {
-    setIsMounted(true);
-  }, []);
-
-  if (!isMounted) {
-    return null;
-  }
-
+}: {
+  children: React.ReactNode
+}) {
   return (
-    <html lang="en">
-      <body>
-        <AppWalletProvider>
-          <header className="p-4 bg-gray-800 text-white">
-            <nav className="flex justify-end items-center space-x-4">
-              <div className="ml-4">
-                <WalletMultiButton style={{}} />
-              </div>
-            </nav>
-          </header>
+    <html lang="ja">
+      <body className={inter.className}>
+        <AppWalletProviderWrapper>
           {children}
-        </AppWalletProvider>
+        </AppWalletProviderWrapper>
       </body>
     </html>
-  );
+  )
 }

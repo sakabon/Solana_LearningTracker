@@ -21,7 +21,7 @@ export default function Home() {
   const [status, setStatus] = useState<string>("");
   const [learningTime, setLearningTime] = useState<number | null>(0);
   const [points, setPoints] = useState<number | null>(0);
-  const [minutes, setMinutes] = useState("");
+  const [minutes, setMinutes] = useState(0);
 
   useEffect(() => {
     if (connected && wallet) {
@@ -53,9 +53,9 @@ export default function Home() {
       setStatus("ウォレットが接続されていません");
       return;
     }
-
+  
     setStatus("初期化中...");
-
+  
     try {
       await initializeUser(wallet, connection);
       setStatus("初期化完了");
@@ -75,53 +75,28 @@ export default function Home() {
       }
     }
   };
-
-  // const handleAddLearningTime = async () => {
-  //   if (!connected || !wallet) {
-  //     setStatus("ウォレットが接続されていません");
-  //     return;
-  //   }
-
-  //   setStatus("学習時間を追加中...");
-
-  //   try {
-  //     await addLearningTime(wallet, connection, minutes);
-  //     setStatus("学習時間を追加しました");
-  //     alert(`${minutes}分の学習時間が追加されました！`);
-  //     await fetchUserData();
-  //     setMinutes(0); // 入力欄をリセット
-  //   } catch (error) {
-  //     console.error("学習時間追加エラー:", error);
-  //     setStatus("学習時間の追加に失敗しました");
-  //   }
-  // };
+  
+  
 
   const handleAddLearningTime = async () => {
     if (!connected || !wallet) {
       setStatus("ウォレットが接続されていません");
       return;
     }
-  
-    const minutesNum = parseInt(minutes);
-    if (isNaN(minutesNum) || minutesNum <= 0 || minutesNum > 1440) {
-      setStatus("有効な学習時間を入力してください（1分から24時間まで）");
-      return;
-    }
-  
+
     setStatus("学習時間を追加中...");
-  
+
     try {
-      await addLearningTime(wallet, connection, minutesNum);
+      await addLearningTime(wallet, connection, minutes);
       setStatus("学習時間を追加しました");
-      alert(`${minutesNum}分の学習時間が追加されました！`);
+      alert(`${minutes}分の学習時間が追加されました！`);
       await fetchUserData();
-      setMinutes(""); // 入力欄をリセット
+      setMinutes(0); // 入力欄をリセット
     } catch (error) {
       console.error("学習時間追加エラー:", error);
       setStatus("学習時間の追加に失敗しました");
     }
   };
-  
 
   const handleUsePoints = async () => {
     if (!connected || !wallet) {
@@ -162,23 +137,14 @@ export default function Home() {
               Initialize
             </button>
             <div className="mt-4">
-              <label htmlFor="learningTime" className="block mb-2">
-                Learning Time (min)
-              </label>
               <input
-                id="learningTime"
-                type="text"
+                type="number"
                 value={minutes}
-                onChange={(e) => {
-                  const value = e.target.value;
-                  if (value === "" || /^\d+$/.test(value)) {
-                    setMinutes(value);
-                  }
-                }}
+                onChange={(e) => setMinutes(parseInt(e.target.value) || 0)}
                 className="border p-2 mr-2"
-                placeholder="Enter minutes (1-1440)"
+                placeholder="学習時間（分）"
+                min="0"
               />
-
               <button
                 onClick={handleAddLearningTime}
                 className="bg-green-500 text-white px-4 py-2 rounded"
@@ -187,7 +153,6 @@ export default function Home() {
                 Add Learning Time
               </button>
             </div>
-
             <button
               onClick={handleUsePoints}
               className="bg-purple-500 text-white px-4 py-2 rounded mt-4"

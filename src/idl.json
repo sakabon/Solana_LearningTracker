@@ -1,36 +1,51 @@
 {
-  "address": "H5U88wk7D8Qj7KeztdrJJcWqLwAgZLyMVozrigd2D1Ue",
+  "address": "6XookqjXLBqTWk2Zom4grnPu8ZMLRfVCwHoS7oumJJ3j",
   "version": "0.1.0",
-  "name": "counter",
+  "name": "learning_tracker",
   "instructions": [
     {
-      "name": "createCounter",
+      "name": "initializeUser",
       "accounts": [
-        { "name": "authority", "isMut": true, "isSigner": true },
-        { "name": "counter", "isMut": true, "isSigner": false },
+        { "name": "user", "isMut": true, "isSigner": false },
+        { "name": "userWallet", "isMut": true, "isSigner": true },
         { "name": "systemProgram", "isMut": false, "isSigner": false }
       ],
       "args": []
     },
     {
-      "name": "updateCounter",
+      "name": "addLearningTime",
       "accounts": [
-        { "name": "authority", "isMut": false, "isSigner": true },
-        { "name": "counter", "isMut": true, "isSigner": false }
+        { "name": "user", "isMut": true, "isSigner": false },
+        { "name": "userWallet", "isMut": false, "isSigner": true }
       ],
-      "args": []
+      "args": [{ "name": "minutes", "type": "u64" }]
+    },
+    {
+      "name": "usePointsForContent",
+      "accounts": [
+        { "name": "user", "isMut": true, "isSigner": false },
+        { "name": "userWallet", "isMut": false, "isSigner": true }
+      ],
+      "args": [{ "name": "points", "type": "u64" }]
     }
   ],
   "accounts": [
     {
-      "name": "Counter",
+      "name": "User",
       "type": {
         "kind": "struct",
         "fields": [
-          { "name": "authority", "type": "publicKey" },
-          { "name": "count", "type": "u64" }
+          { "name": "learningTime", "type": "u64" },
+          { "name": "points", "type": "u64" }
         ]
       }
+    }
+  ],
+  "errors": [
+    {
+      "code": 6000,
+      "name": "InsufficientPoints",
+      "msg": "Insufficient points for this action."
     }
   ]
 }
